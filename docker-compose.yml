@@ -6,7 +6,7 @@ services:
     volumes:
       - redis_data:/data
 
-  weather-servise:
+  weather-service:
     build: .
     ports:
       - "8080:8080"
