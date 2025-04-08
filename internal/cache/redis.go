@@ -32,3 +32,7 @@ func (r *RedisCache) Get(ctx context.Context, key string) (string, error) {
 func (r *RedisCache) Set(ctx context.Context, key string, value string) error {
 	return r.client.Set(ctx, key, value, r.ttl).Err()
 }
+
+func (r *RedisCache) GetClient() *redis.Client {
+	return r.client
+}

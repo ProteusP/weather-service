@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"weather-service/internal/cache"
 	"weather-service/internal/config"
 	"weather-service/internal/handler"
+	"weather-service/internal/middleware"
 	"weather-service/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -19,12 +21,16 @@ func main() {
 		panic(fmt.Sprintf("Failed to init Redis: %v", err))
 	}
 
-	weatherService := service.NewWeatherService(redisCache, cfg.WeatherAPIKey)
+	//Можно добавить limit в config
+	rateLimiter := middleware.RateLimiter(redisCache, 2, time.Hour)
 
+	weatherService := service.NewWeatherService(redisCache, cfg.WeatherAPIKey)
 	weatherHandler := handler.NewWeatherHandler(weatherService)
 	forecastHandler := handler.NewForecastHandler(weatherService)
 
 	r := gin.Default()
+	r.Use(rateLimiter)
+
 	r.GET("/weather/:city", weatherHandler.GetCurrentWeather)
 	r.GET("/forecast/:city/:days", forecastHandler.GetForecast)
 
