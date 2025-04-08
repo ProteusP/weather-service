@@ -22,9 +22,11 @@ func main() {
 	weatherService := service.NewWeatherService(redisCache, cfg.WeatherAPIKey)
 
 	weatherHandler := handler.NewWeatherHandler(weatherService)
+	forecastHandler := handler.NewForecastHandler(weatherService)
 
 	r := gin.Default()
 	r.GET("/weather/:city", weatherHandler.GetCurrentWeather)
+	r.GET("/forecast/:city/:days", forecastHandler.GetForecast)
 
 	r.Run(":" + cfg.ServerPort)
 

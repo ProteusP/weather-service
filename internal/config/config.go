@@ -26,7 +26,7 @@ func parseDuration(envVar string, defaultVal time.Duration) time.Duration {
 	}
 	d, err := time.ParseDuration(envVar)
 	if err != nil {
-		log.Printf("Ошибка обработки времени: %s", err)
+		log.Printf("Time parsing error: %s", err)
 		return defaultVal
 	}
 	return d

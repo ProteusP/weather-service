@@ -27,7 +27,7 @@ func (h *WeatherHandler) GetCurrentWeather(c *gin.Context) {
 		return
 	}
 
-	var jsonData map[string]interface{}
+	var jsonData map[string]any
 
 	if err := json.Unmarshal([]byte(data), &jsonData); err != nil {
 		c.JSON(
