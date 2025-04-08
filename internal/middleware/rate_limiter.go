@@ -13,8 +13,14 @@ import (
 
 func RateLimiter(redisCache *cache.RedisCache, limit int, window time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		//Чтобы не считать запрос к "/favicon.ico"
+		if c.Request.Method == http.MethodOptions || c.Request.URL.Path == "/favicon.ico" {
+			c.Next()
+			return
+		}
+
 		ip := c.ClientIP()
-		key := fmt.Sprintf("rate:%s", ip)
+		key := fmt.Sprintf("rate:%s:%s", ip, c.Request.URL.Path)
 
 		count, err := redisCache.GetClient().Incr(context.Background(), key).Result()
 

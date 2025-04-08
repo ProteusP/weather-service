@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"time"
 	"weather-service/internal/cache"
@@ -33,6 +34,15 @@ func main() {
 
 	r.GET("/weather/:city", weatherHandler.GetCurrentWeather)
 	r.GET("/forecast/:city/:days", forecastHandler.GetForecast)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go weatherService.StartCacheWarmup(
+		ctx,
+		cfg.CacheWarmupInterval,
+		cfg.PopularCities,
+	)
 
 	r.Run(":" + cfg.ServerPort)
 
